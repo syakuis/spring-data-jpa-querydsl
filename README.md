@@ -1,4 +1,44 @@
-# Spring Framework Template for Gradle
+# QueryDSL for Spring Data JPA
+
+Gradle의 annotationProcessor로 심플하게 설정 방법이 줄어들었다. 더 이상 플러그인은 사용하지 않아도 된다. 참고: [https://iammert.medium.com/annotation-processing-dont-repeat-yourself-generate-your-code-8425e60c6657](https://iammert.medium.com/annotation-processing-dont-repeat-yourself-generate-your-code-8425e60c6657)
+
+Gradle 버전은 6.5 이며 스프링 부트 버전은 2.4.5 이다.
+
+```groovy
+ext.querydslVersion = "4.4.0"
+
+def querydslDir = "${buildDir}/generated/querydsl"
+
+sourceSets {
+				main.java.srcDir querydslDir
+}
+
+dependencies {
+				implementation "com.querydsl:querydsl-jpa:${querydslVersion}"
+        annotationProcessor(
+            "jakarta.persistence:jakarta.persistence-api",
+            "jakarta.annotation:jakarta.annotation-api",
+            "com.querydsl:querydsl-apt:${querydslVersion}:jpa"
+        )
+}
+```
+
+스프링 빈 설정
+
+```groovy
+@Configuration
+public class QuerydslConfiguration {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Bean
+    public JPAQueryFactory jpaQueryFactory() {
+        return new JPAQueryFactory(entityManager);
+    }
+}
+```
+
+이하 생략 전체 내용은 https://syaku.tistory.com/384 확인할 수 있습니다.
 
 ## Installing Gradle 6.5
 
